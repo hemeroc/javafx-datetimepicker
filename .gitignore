@@ -1,0 +1,125 @@
+###################
+### Environment ###
+###################
+
+### PDF-Files ###
+*.pdf
+
+### Log-Files ###
+log/
+
+### Database-Files ###
+/database/
+/server/database/
+*.mv.db
+
+### Java ###
+*.class
+*.jar
+*.war
+*.ear
+hs_err_pid*
+
+###################
+### Build-Tools ###
+###################
+
+### Gradle ###
+.gradle
+build/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+!maven-wrapper.jar
+
+############
+### IDEs ###
+############
+
+### Intellij ###
+.idea/
+.idea_modules/
+*.iws
+*.iml
+out/
+
+### Eclipse ###
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+.project
+.externalToolBuilders/
+*.launch
+.classpath
+.factorypath
+.buildpath
+.target
+.tern-project
+.springBeans
+.recommenders/
+
+### NetBeans ###
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+.nb-gradle/
+
+#########################
+### Operating Systems ###
+#########################
+
+### Windows ###
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+### Linux ###
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+### OSX ###
+*.DS_Store
+.AppleDouble
+.LSOverride
+# Thumbnails
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+Icon
+
