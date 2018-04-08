@@ -28,11 +28,43 @@ import static javafx.scene.input.MouseButton.PRIMARY;
 public class DateTimePickerSkin extends DatePickerSkin {
     private final ObjectProperty<LocalTime> timeObjectProperty;
     private final Node popupContent;
+    private final DateTimePicker dateTimePicker;
+    private final HBox hBoxTimeSpinner;
+    private final HBox hBoxTimeSlider;
 
     public DateTimePickerSkin(DateTimePicker dateTimePicker) {
         super(dateTimePicker);
-        popupContent = super.getPopupContent();
+        this.dateTimePicker = dateTimePicker;
         timeObjectProperty = new SimpleObjectProperty<>(this, "displayedTime", LocalTime.from(dateTimePicker.getDateTimeValue()));
+
+        popupContent = super.getPopupContent();
+
+        hBoxTimeSpinner = getHBoxTimeSpinner();
+        hBoxTimeSlider = getHBoxTimeSlider();
+
+        dateTimePicker.timeSelectorProperty().addListener((observable, oldValue, newValue) -> {
+            if (oldValue != newValue) {
+                switch (oldValue) {
+                    case SPINNER:
+                        ((VBox) popupContent).getChildren().remove(hBoxTimeSpinner);
+                        break;
+                    case SLIDER:
+                        ((VBox) popupContent).getChildren().remove(hBoxTimeSlider);
+                        break;
+                }
+                switch (newValue) {
+                    case SPINNER:
+                        ((VBox) popupContent).getChildren().add(hBoxTimeSpinner);
+                        break;
+                    case SLIDER:
+                        ((VBox) popupContent).getChildren().add(hBoxTimeSlider);
+                        break;
+                }
+            }
+        });
+    }
+
+    private HBox getHBoxTimeSpinner() {
         HourMinuteSpinner sHour = new HourMinuteSpinner(0, 23, dateTimePicker.getDateTimeValue().getHour());
         CustomBinding.bindBidirectional(timeObjectProperty, sHour.valueProperty(),
                 LocalTime::getHour,
@@ -48,12 +80,16 @@ public class DateTimePickerSkin extends DatePickerSkin {
         hBox.setPadding(new Insets(8, 8, 8, 8));
         hBox.setAlignment(Pos.CENTER_LEFT);
         hBox.getStyleClass().add("month-year-pane");
-        ((VBox) popupContent).getChildren().add(hBox);
         registerChangeListener(dateTimePicker.valueProperty(), e -> {
             LocalDateTime dateTimeValue = dateTimePicker.getDateTimeValue();
             timeObjectProperty.set((dateTimeValue != null) ? LocalTime.from(dateTimeValue) : LocalTime.MIDNIGHT);
             dateTimePicker.fireEvent(new ActionEvent());
         });
+        return hBox;
+    }
+
+    private HBox getHBoxTimeSlider() {
+        return new HBox(new Label("TIME SLIDER"));
     }
 
     /**

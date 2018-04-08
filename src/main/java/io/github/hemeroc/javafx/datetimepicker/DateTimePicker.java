@@ -17,16 +17,21 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.FormatStyle;
 import java.util.Locale;
 
+import static io.github.hemeroc.javafx.datetimepicker.DateTimePicker.TimeSelector.NONE;
+import static java.lang.Boolean.TRUE;
+
 public class DateTimePicker extends DatePicker {
-    public static final String DefaultFormat = DateTimeFormatterBuilder.getLocalizedDateTimePattern(
-            FormatStyle.MEDIUM, FormatStyle.SHORT, IsoChronology.INSTANCE,
-            Locale.GERMANY);
 
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DefaultFormat);
-
+    public static final String DEFAULT_FORMAT = DateTimeFormatterBuilder.getLocalizedDateTimePattern(
+            FormatStyle.MEDIUM,
+            FormatStyle.SHORT,
+            IsoChronology.INSTANCE,
+            Locale.getDefault());
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DEFAULT_FORMAT);
     private ObjectProperty<LocalDateTime> dateTimeValue = new SimpleObjectProperty<>(LocalDateTime.now());
-
-    private ObjectProperty<String> format = new SimpleObjectProperty<String>() {
+    private ObjectProperty<TimeSelector> timeSelector = new SimpleObjectProperty<>(NONE);
+    private ObjectProperty<Boolean> minutesSelector = new SimpleObjectProperty<>(TRUE);
+    private ObjectProperty<String> format = new SimpleObjectProperty<>() {
         public void set(String newValue) {
             super.set(newValue);
             formatter = DateTimeFormatter.ofPattern(newValue);
@@ -36,7 +41,6 @@ public class DateTimePicker extends DatePicker {
     public DateTimePicker(LocalDateTime localDateTime) {
         super(localDateTime.toLocalDate());
         setConverter(new InternalConverter());
-
         valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 dateTimeValue.set(null);
@@ -49,11 +53,9 @@ public class DateTimePicker extends DatePicker {
                 }
             }
         });
-
         dateTimeValue.addListener((observable, oldValue, newValue) -> {
             setValue(newValue == null ? null : newValue.toLocalDate());
         });
-
         getEditor().focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue)
                 simulateEnterPressed();
@@ -74,10 +76,11 @@ public class DateTimePicker extends DatePicker {
     }
 
     public void setDateTimeValue(LocalDateTime dateTimeValue) {
-        if (dateTimeValue.isAfter(LocalDateTime.of(1971, 6, 30, 12, 0)))
+        if (dateTimeValue.isAfter(LocalDateTime.of(1971, 6, 30, 12, 0))) {
             this.dateTimeValue.set(dateTimeValue);
-        else
+        } else {
             this.dateTimeValue.set(null);
+        }
     }
 
     public ObjectProperty<LocalDateTime> dateTimeValueProperty() {
@@ -88,17 +91,40 @@ public class DateTimePicker extends DatePicker {
         return format.get();
     }
 
-    public ObjectProperty<String> formatProperty() {
-        return format;
-    }
-
     public void setFormat(String format) {
         this.format.set(format);
     }
 
+    public ObjectProperty<String> formatProperty() {
+        return format;
+    }
+
+    public TimeSelector getTimeSelector() {
+        return timeSelector.get();
+    }
+
+    public void setTimeSelector(TimeSelector timeSelector) {
+        this.timeSelector.set(timeSelector);
+    }
+
+    public ObjectProperty<TimeSelector> timeSelectorProperty() {
+        return timeSelector;
+    }
+
+    public Boolean getMinutesSelector() {
+        return minutesSelector.get();
+    }
+
+    public void setTimeSelector(Boolean minutesSelector) {
+        this.minutesSelector.set(minutesSelector);
+    }
+
+    public ObjectProperty<Boolean> minutesSelector() {
+        return minutesSelector;
+    }
+
     class InternalConverter extends StringConverter<LocalDate> {
         public String toString(LocalDate object) {
-
             LocalDateTime value = getDateTimeValue();
             return (value != null) ? value.format(formatter) : "";
         }
@@ -108,7 +134,6 @@ public class DateTimePicker extends DatePicker {
                 dateTimeValue.set(null);
                 return null;
             }
-
             dateTimeValue.set(LocalDateTime.parse(value, formatter));
             return dateTimeValue.get().toLocalDate();
         }
@@ -118,6 +143,13 @@ public class DateTimePicker extends DatePicker {
     protected Skin<?> createDefaultSkin() {
         return new DateTimePickerSkin(this);
     }
+
+    public enum TimeSelector {
+        NONE,
+        SPINNER,
+        SLIDER,
+    }
+
 }
 
 
