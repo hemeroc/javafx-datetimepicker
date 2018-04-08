@@ -1,5 +1,6 @@
-package io.github.hemeroc.datetimepicker;
+package io.github.hemeroc.javafx.datetimepicker.demo;
 
+import io.github.hemeroc.javafx.datetimepicker.DateTimePicker;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;

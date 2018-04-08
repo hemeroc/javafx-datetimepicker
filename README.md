@@ -12,24 +12,33 @@ This project is licensed under the [Apache License 2.0](LICENSE).
 
 ## Usage
 
-### Add the maven dependency
+
+### Add the jitpack maven repository
 
 ```xml
 <repositories>
     <repository>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-        <id>bintray-hemeroc-datetimepicker</id>
-        <name>bintray</name>
-        <url>https://dl.bintray.com/hemeroc/datetimepicker</url>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
     </repository>
 </repositories>
+```
+
+### Add the maven dependency
+
+```xml
+<dependency>
+    <groupId>com.github.hemeroc</groupId>
+    <artifactId>javafx-datetimepicker</artifactId>
+    <version>master-SNAPSHOT</version>
+</dependency>
 ```
 
 ### Write some sample code
 
 ```java
+import io.github.hemeroc.javafx.datetimepicker.DateTimePicker;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
