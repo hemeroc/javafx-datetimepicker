@@ -115,11 +115,11 @@ public class DateTimePicker extends DatePicker {
         return minutesSelector.get();
     }
 
-    public void setTimeSelector(Boolean minutesSelector) {
+    public void setMinutesSelector(Boolean minutesSelector) {
         this.minutesSelector.set(minutesSelector);
     }
 
-    public ObjectProperty<Boolean> minutesSelector() {
+    public ObjectProperty<Boolean> minutesSelectorProperty() {
         return minutesSelector;
     }
 

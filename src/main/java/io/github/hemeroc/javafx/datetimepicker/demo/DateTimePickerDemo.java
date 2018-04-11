@@ -25,7 +25,7 @@ public class DateTimePickerDemo extends Application {
         CheckBox checkBoxMinutes = new CheckBox("MinutesSelector");
         checkBoxMinutes.disableProperty().setValue(true);
         checkBoxMinutes.setPadding(new Insets(0, 0, 0, 25));
-        checkBoxMinutes.selectedProperty().bindBidirectional(dateTimePicker.minutesSelector());
+        checkBoxMinutes.selectedProperty().bindBidirectional(dateTimePicker.minutesSelectorProperty());
         radioButtonNone.selectedProperty().bindBidirectional(checkBoxMinutes.disableProperty());
 
         group.selectedToggleProperty().addListener((observable, oldValue, newValue) ->

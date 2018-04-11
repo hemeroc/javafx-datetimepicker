@@ -2,8 +2,11 @@ package io.github.hemeroc.javafx.datetimepicker;
 
 import io.github.hemeroc.javafx.datetimepicker.util.CustomBinding;
 import javafx.animation.AnimationTimer;
+import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -11,6 +14,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
+import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.skin.DatePickerSkin;
@@ -29,8 +34,8 @@ public class DateTimePickerSkin extends DatePickerSkin {
     private final ObjectProperty<LocalTime> timeObjectProperty;
     private final Node popupContent;
     private final DateTimePicker dateTimePicker;
-    private final HBox hBoxTimeSpinner;
-    private final HBox hBoxTimeSlider;
+    private final Node timeSpinner;
+    private final Node timeSlider;
 
     public DateTimePickerSkin(DateTimePicker dateTimePicker) {
         super(dateTimePicker);
@@ -39,47 +44,63 @@ public class DateTimePickerSkin extends DatePickerSkin {
 
         popupContent = super.getPopupContent();
 
-        hBoxTimeSpinner = getHBoxTimeSpinner();
-        hBoxTimeSlider = getHBoxTimeSlider();
+        timeSpinner = getTimeSpinner();
+        timeSlider = getTimeSlider();
 
         dateTimePicker.timeSelectorProperty().addListener((observable, oldValue, newValue) -> {
             if (oldValue != newValue) {
                 switch (oldValue) {
                     case SPINNER:
-                        ((VBox) popupContent).getChildren().remove(hBoxTimeSpinner);
+                        ((VBox) popupContent).getChildren().remove(timeSpinner);
                         break;
                     case SLIDER:
-                        ((VBox) popupContent).getChildren().remove(hBoxTimeSlider);
+                        ((VBox) popupContent).getChildren().remove(timeSlider);
                         break;
                 }
                 switch (newValue) {
                     case SPINNER:
-                        ((VBox) popupContent).getChildren().add(hBoxTimeSpinner);
+                        ((VBox) popupContent).getChildren().add(timeSpinner);
                         break;
                     case SLIDER:
-                        ((VBox) popupContent).getChildren().add(hBoxTimeSlider);
+                        ((VBox) popupContent).getChildren().add(timeSlider);
                         break;
                 }
             }
         });
+
     }
 
-    private HBox getHBoxTimeSpinner() {
-        HourMinuteSpinner sHour = new HourMinuteSpinner(0, 23, dateTimePicker.getDateTimeValue().getHour());
-        CustomBinding.bindBidirectional(timeObjectProperty, sHour.valueProperty(),
+    private Node getTimeSpinner() {
+        if(timeSpinner != null) {
+            return timeSpinner;
+        }
+        HourMinuteSpinner spinnerHours = new HourMinuteSpinner(0, 23, dateTimePicker.getDateTimeValue().getHour());
+        CustomBinding.bindBidirectional(timeObjectProperty, spinnerHours.valueProperty(),
                 LocalTime::getHour,
                 integer -> timeObjectProperty.get().withHour(integer)
         );
-        HourMinuteSpinner sMinute = new HourMinuteSpinner(0, 59, dateTimePicker.getDateTimeValue().getMinute());
-        CustomBinding.bindBidirectional(timeObjectProperty, sHour.valueProperty(),
+        HourMinuteSpinner spinnerMinutes = new HourMinuteSpinner(0, 59, dateTimePicker.getDateTimeValue().getMinute());
+        CustomBinding.bindBidirectional(timeObjectProperty, spinnerMinutes.valueProperty(),
                 LocalTime::getMinute,
                 integer -> timeObjectProperty.get().withMinute(integer)
         );
-        HBox hBox = new HBox(new Label("Time:"), sHour, new Label(":"), sMinute);
+        final Label labelTimeSeperator = new Label(":");
+        HBox hBox = new HBox(new Label("Time:"), spinnerHours, labelTimeSeperator, spinnerMinutes);
         hBox.setSpacing(5);
-        hBox.setPadding(new Insets(8, 8, 8, 8));
+        hBox.setPadding(new Insets(8));
         hBox.setAlignment(Pos.CENTER_LEFT);
         hBox.getStyleClass().add("month-year-pane");
+        dateTimePicker.minutesSelectorProperty().addListener((observable, oldValue, newValue) -> {
+            if(oldValue != newValue) {
+                if(newValue) {
+                    hBox.getChildren().add(labelTimeSeperator);
+                    hBox.getChildren().add(spinnerMinutes);
+                } else {
+                    hBox.getChildren().remove(labelTimeSeperator);
+                    hBox.getChildren().remove(spinnerMinutes);
+                }
+            }
+        });
         registerChangeListener(dateTimePicker.valueProperty(), e -> {
             LocalDateTime dateTimeValue = dateTimePicker.getDateTimeValue();
             timeObjectProperty.set((dateTimeValue != null) ? LocalTime.from(dateTimeValue) : LocalTime.MIDNIGHT);
@@ -88,8 +109,24 @@ public class DateTimePickerSkin extends DatePickerSkin {
         return hBox;
     }
 
-    private HBox getHBoxTimeSlider() {
-        return new HBox(new Label("TIME SLIDER"));
+    private Node getTimeSlider() {
+        if(timeSlider != null) {
+            return timeSlider;
+        }
+        final Slider sliderHours = new Slider(0, 23, dateTimePicker.getDateTimeValue().getHour());
+        final Slider sliderMinutes = new Slider(0, 59, dateTimePicker.getDateTimeValue().getMinute());
+        final VBox vBox = new VBox(5, sliderHours, sliderMinutes);
+        dateTimePicker.minutesSelectorProperty().addListener((observable, oldValue, newValue) -> {
+            if(oldValue != newValue) {
+                if(newValue) {
+                    vBox.getChildren().add(sliderMinutes);
+                } else {
+                    vBox.getChildren().remove(sliderMinutes);
+                }
+            }
+        });
+        vBox.setPadding(new Insets(8));
+        return vBox;
     }
 
     /**
