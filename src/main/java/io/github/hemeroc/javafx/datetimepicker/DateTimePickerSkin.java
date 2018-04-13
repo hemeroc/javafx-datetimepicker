@@ -2,11 +2,8 @@ package io.github.hemeroc.javafx.datetimepicker;
 
 import io.github.hemeroc.javafx.datetimepicker.util.CustomBinding;
 import javafx.animation.AnimationTimer;
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -15,15 +12,16 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
-import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.skin.DatePickerSkin;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.converter.IntegerStringConverter;
+import javafx.util.converter.NumberStringConverter;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -71,7 +69,7 @@ public class DateTimePickerSkin extends DatePickerSkin {
     }
 
     private Node getTimeSpinner() {
-        if(timeSpinner != null) {
+        if (timeSpinner != null) {
             return timeSpinner;
         }
         HourMinuteSpinner spinnerHours = new HourMinuteSpinner(0, 23, dateTimePicker.getDateTimeValue().getHour());
@@ -91,8 +89,8 @@ public class DateTimePickerSkin extends DatePickerSkin {
         hBox.setAlignment(Pos.CENTER_LEFT);
         hBox.getStyleClass().add("month-year-pane");
         dateTimePicker.minutesSelectorProperty().addListener((observable, oldValue, newValue) -> {
-            if(oldValue != newValue) {
-                if(newValue) {
+            if (oldValue != newValue) {
+                if (newValue) {
                     hBox.getChildren().add(labelTimeSeperator);
                     hBox.getChildren().add(spinnerMinutes);
                 } else {
@@ -110,15 +108,17 @@ public class DateTimePickerSkin extends DatePickerSkin {
     }
 
     private Node getTimeSlider() {
-        if(timeSlider != null) {
+        if (timeSlider != null) {
             return timeSlider;
         }
-        final Slider sliderHours = new Slider(0, 23, dateTimePicker.getDateTimeValue().getHour());
-        final Slider sliderMinutes = new Slider(0, 59, dateTimePicker.getDateTimeValue().getMinute());
+        final HourMinuteSlider sliderHours =
+                new HourMinuteSlider(0, 23, dateTimePicker.getDateTimeValue().getHour(), 6, 5);
+        final HourMinuteSlider sliderMinutes =
+                new HourMinuteSlider(0, 59, dateTimePicker.getDateTimeValue().getMinute(), 10, 9);
         final VBox vBox = new VBox(5, sliderHours, sliderMinutes);
         dateTimePicker.minutesSelectorProperty().addListener((observable, oldValue, newValue) -> {
-            if(oldValue != newValue) {
-                if(newValue) {
+            if (oldValue != newValue) {
+                if (newValue) {
                     vBox.getChildren().add(sliderMinutes);
                 } else {
                     vBox.getChildren().remove(sliderMinutes);
@@ -141,7 +141,7 @@ public class DateTimePickerSkin extends DatePickerSkin {
 
         private final IntegerSpinnerValueFactory integerSpinnerValueFactory;
 
-        public ObjectProperty<Integer> valueProperty() {
+        ObjectProperty<Integer> valueProperty() {
             return integerSpinnerValueFactory.valueProperty();
         }
 
@@ -164,7 +164,7 @@ public class DateTimePickerSkin extends DatePickerSkin {
             increaseButton.setGraphic(increaseArrow);
 
             Label valueLabel = new Label();
-            valueLabel.minWidth(10);
+            valueLabel.setMinWidth(20);
             valueLabel.textProperty()
                     .bindBidirectional(integerSpinnerValueFactory.valueProperty(), new IntegerStringConverter() {
                         @Override
@@ -239,6 +239,32 @@ public class DateTimePickerSkin extends DatePickerSkin {
                     timer.stop();
                 }
             }
+        }
+    }
+
+    class HourMinuteSlider extends HBox {
+
+        HourMinuteSlider(int minValue, int maxValue, int currentValue, int majorTickCount, int minorTickCount) {
+            final Slider slider = new Slider(minValue, maxValue, currentValue);
+            slider.setBlockIncrement(1);
+            slider.setMajorTickUnit(majorTickCount);
+            slider.setMinorTickCount(minorTickCount);
+            slider.setShowTickLabels(true);
+            slider.setShowTickMarks(true);
+            slider.setSnapToTicks(true);
+            setHgrow(slider, Priority.ALWAYS);
+            final Label valueLabel = new Label("00");
+            valueLabel.setMinWidth(20);
+            valueLabel.textProperty()
+                    .bindBidirectional(slider.valueProperty(), new NumberStringConverter() {
+                        @Override
+                        public String toString(Number object) {
+                            return String.format("%02d", object.intValue());
+                        }
+                    });
+            valueLabel.getStyleClass().add("spinner-label");
+            this.setSpacing(5);
+            this.getChildren().addAll(valueLabel, slider);
         }
     }
 
