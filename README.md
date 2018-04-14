@@ -12,7 +12,9 @@ with and without the possibility to select minutes separately,
 
 This project is licensed under the [Apache License 2.0](LICENSE).
 
-## Screenshots
+## Demo
+
+![Demo](./docs/demo.gif)
 
 ## Contribution
 
