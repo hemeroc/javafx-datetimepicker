@@ -2,6 +2,8 @@ package io.github.hemeroc.javafx.datetimepicker;
 
 import io.github.hemeroc.javafx.datetimepicker.util.CustomBinding;
 import javafx.animation.AnimationTimer;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
@@ -20,7 +22,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.util.converter.IntegerStringConverter;
 import javafx.util.converter.NumberStringConverter;
 
 import java.time.LocalDateTime;
@@ -72,15 +73,17 @@ public class DateTimePickerSkin extends DatePickerSkin {
         if (timeSpinner != null) {
             return timeSpinner;
         }
-        HourMinuteSpinner spinnerHours = new HourMinuteSpinner(0, 23, dateTimePicker.getDateTimeValue().getHour());
+        final HourMinuteSpinner spinnerHours =
+                new HourMinuteSpinner(0, 23, dateTimePicker.getDateTimeValue().getHour());
         CustomBinding.bindBidirectional(timeObjectProperty, spinnerHours.valueProperty(),
                 LocalTime::getHour,
-                integer -> timeObjectProperty.get().withHour(integer)
+                integer -> timeObjectProperty.get().withHour(integer.intValue())
         );
-        HourMinuteSpinner spinnerMinutes = new HourMinuteSpinner(0, 59, dateTimePicker.getDateTimeValue().getMinute());
+        final HourMinuteSpinner spinnerMinutes =
+                new HourMinuteSpinner(0, 59, dateTimePicker.getDateTimeValue().getMinute());
         CustomBinding.bindBidirectional(timeObjectProperty, spinnerMinutes.valueProperty(),
                 LocalTime::getMinute,
-                integer -> timeObjectProperty.get().withMinute(integer)
+                integer -> timeObjectProperty.get().withMinute(integer.intValue())
         );
         final Label labelTimeSeperator = new Label(":");
         HBox hBox = new HBox(new Label("Time:"), spinnerHours, labelTimeSeperator, spinnerMinutes);
@@ -155,34 +158,21 @@ public class DateTimePickerSkin extends DatePickerSkin {
             decreaseArrow.getStyleClass().add("left-arrow");
             decreaseArrow.setMaxSize(USE_PREF_SIZE, USE_PREF_SIZE);
             decreaseButton.setGraphic(decreaseArrow);
-
             Button increaseButton = new Button();
             increaseButton.getStyleClass().add("right-button");
             StackPane increaseArrow = new StackPane();
             increaseArrow.getStyleClass().add("right-arrow");
             increaseArrow.setMaxSize(USE_PREF_SIZE, USE_PREF_SIZE);
             increaseButton.setGraphic(increaseArrow);
-
             Label valueLabel = new Label();
             valueLabel.setMinWidth(20);
-            valueLabel.textProperty()
-                    .bindBidirectional(integerSpinnerValueFactory.valueProperty(), new IntegerStringConverter() {
-                        @Override
-                        public String toString(Integer object) {
-                            return String.format("%02d", object);
-                        }
-                    });
+            valueLabel.textProperty().bind(Bindings.format("%02d", integerSpinnerValueFactory.valueProperty()));
             valueLabel.getStyleClass().add("spinner-label");
-
             IncrementHandler incrementHandler = new IncrementHandler(integerSpinnerValueFactory);
-            decreaseButton.setOnAction(event -> {
-                integerSpinnerValueFactory.decrement(1);
-            });
+            decreaseButton.setOnAction(event -> integerSpinnerValueFactory.decrement(1));
             decreaseButton.addEventFilter(MouseEvent.MOUSE_PRESSED, incrementHandler);
             decreaseButton.addEventFilter(MouseEvent.MOUSE_RELEASED, incrementHandler);
-            increaseButton.setOnAction(event -> {
-                integerSpinnerValueFactory.increment(1);
-            });
+            increaseButton.setOnAction(event -> integerSpinnerValueFactory.increment(1));
             increaseButton.addEventFilter(MouseEvent.MOUSE_PRESSED, incrementHandler);
             increaseButton.addEventFilter(MouseEvent.MOUSE_RELEASED, incrementHandler);
 
@@ -199,9 +189,6 @@ public class DateTimePickerSkin extends DatePickerSkin {
         private static final long STEP = 1000L * 1000L * 100; // 0.5 sec
         private final AnimationTimer timer = new AnimationTimer() {
 
-            /**
-             * {@inheritDoc}
-             */
             @Override
             public void handle(long now) {
                 if (now - startTimestamp >= nextStep) {
@@ -219,9 +206,6 @@ public class DateTimePickerSkin extends DatePickerSkin {
             spinnerValueFactory = integerSpinnerValueFactory;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void handle(MouseEvent event) {
             if (event.getButton() == PRIMARY) {
@@ -244,8 +228,14 @@ public class DateTimePickerSkin extends DatePickerSkin {
 
     class HourMinuteSlider extends HBox {
 
+        private final Slider slider;
+
+        DoubleProperty valueProperty() {
+            return slider.valueProperty();
+        }
+
         HourMinuteSlider(int minValue, int maxValue, int currentValue, int majorTickCount, int minorTickCount) {
-            final Slider slider = new Slider(minValue, maxValue, currentValue);
+            slider = new Slider(minValue, maxValue, currentValue);
             slider.setBlockIncrement(1);
             slider.setMajorTickUnit(majorTickCount);
             slider.setMinorTickCount(minorTickCount);
@@ -255,13 +245,7 @@ public class DateTimePickerSkin extends DatePickerSkin {
             setHgrow(slider, Priority.ALWAYS);
             final Label valueLabel = new Label("00");
             valueLabel.setMinWidth(20);
-            valueLabel.textProperty()
-                    .bindBidirectional(slider.valueProperty(), new NumberStringConverter() {
-                        @Override
-                        public String toString(Number object) {
-                            return String.format("%02d", object.intValue());
-                        }
-                    });
+            valueLabel.textProperty().bind(Bindings.format("%02d", slider.valueProperty()));
             valueLabel.getStyleClass().add("spinner-label");
             this.setSpacing(5);
             this.getChildren().addAll(valueLabel, slider);
