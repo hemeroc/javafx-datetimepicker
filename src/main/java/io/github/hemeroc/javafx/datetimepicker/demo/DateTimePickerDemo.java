@@ -57,7 +57,13 @@ public class DateTimePickerDemo extends Application {
         stage.setScene(new Scene(hBox, 250, 200));
         stage.centerOnScreen();
         stage.show();
+        toFront(stage);
+    }
+
+    private void toFront(Stage stage) {
+        stage.setAlwaysOnTop(true);
         stage.toFront();
+        stage.setAlwaysOnTop(false);
     }
 
     private RadioButton buildRadioButton(ToggleGroup group, DateTimePicker.TimeSelector timeSelector) {
