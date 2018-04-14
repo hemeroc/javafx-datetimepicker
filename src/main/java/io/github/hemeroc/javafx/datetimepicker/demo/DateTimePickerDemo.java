@@ -1,16 +1,21 @@
 package io.github.hemeroc.javafx.datetimepicker.demo;
 
 import io.github.hemeroc.javafx.datetimepicker.DateTimePicker;
+import io.github.hemeroc.javafx.datetimepicker.util.CustomBinding;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.time.format.DateTimeFormatter;
+
+import static io.github.hemeroc.javafx.datetimepicker.DateTimePicker.DEFAULT_FORMAT;
 import static javafx.geometry.Pos.CENTER;
 import static javafx.geometry.Pos.CENTER_LEFT;
 
@@ -31,14 +36,18 @@ public class DateTimePickerDemo extends Application {
         group.selectedToggleProperty().addListener((observable, oldValue, newValue) ->
                 dateTimePicker.setTimeSelector((DateTimePicker.TimeSelector) newValue.getUserData()));
 
-        VBox vBox = new VBox(
+        Label valueLabel = new Label();
+        CustomBinding.bind(dateTimePicker.dateTimeValueProperty(), valueLabel.textProperty(),
+                dt -> dt.format(DateTimeFormatter.ofPattern(DEFAULT_FORMAT)));
+
+        VBox vBox = new VBox(10,
                 radioButtonNone,
                 radioButtonSpinner,
                 radioButtonSlider,
                 checkBoxMinutes,
+                valueLabel,
                 dateTimePicker
         );
-        vBox.setSpacing(10);
         vBox.setAlignment(CENTER_LEFT);
         HBox hBox = new HBox(vBox);
         hBox.setAlignment(CENTER);

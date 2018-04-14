@@ -27,6 +27,11 @@ public class DateTimePickerSkin extends DatePickerSkin {
         this.dateTimePicker = dateTimePicker;
         timeObjectProperty = new SimpleObjectProperty<>(this, "displayedTime", LocalTime.from(dateTimePicker.getDateTimeValue()));
 
+        CustomBinding.bindBidirectional(dateTimePicker.dateTimeValueProperty(), timeObjectProperty,
+                LocalDateTime::toLocalTime,
+                lt -> dateTimePicker.getDateTimeValue().withHour(lt.getHour()).withMinute(lt.getMinute())
+        );
+
         popupContent = super.getPopupContent();
 
         timeSpinner = getTimeSpinner();
@@ -63,12 +68,14 @@ public class DateTimePickerSkin extends DatePickerSkin {
                 new HourMinuteSpinner(0, 23, dateTimePicker.getDateTimeValue().getHour());
         CustomBinding.bindBidirectional(timeObjectProperty, spinnerHours.valueProperty(),
                 LocalTime::getHour,
-                hour -> timeObjectProperty.get().withHour(hour));
+                hour -> timeObjectProperty.get().withHour(hour)
+        );
         final HourMinuteSpinner spinnerMinutes =
                 new HourMinuteSpinner(0, 59, dateTimePicker.getDateTimeValue().getMinute());
         CustomBinding.bindBidirectional(timeObjectProperty, spinnerMinutes.valueProperty(),
                 LocalTime::getMinute,
-                minute -> timeObjectProperty.get().withMinute(minute));
+                minute -> timeObjectProperty.get().withMinute(minute)
+        );
         final Label labelTimeSeperator = new Label(":");
         HBox hBox = new HBox(new Label("Time:"), spinnerHours, labelTimeSeperator, spinnerMinutes);
         hBox.setSpacing(5);
@@ -102,12 +109,14 @@ public class DateTimePickerSkin extends DatePickerSkin {
                 new HourMinuteSlider(0, 23, dateTimePicker.getDateTimeValue().getHour(), 6, 5);
         CustomBinding.bindBidirectional(timeObjectProperty, sliderHours.valueProperty(),
                 LocalTime::getHour,
-                hour -> timeObjectProperty.get().withHour(hour.intValue()));
+                hour -> timeObjectProperty.get().withHour(hour.intValue())
+        );
         final HourMinuteSlider sliderMinutes =
                 new HourMinuteSlider(0, 59, dateTimePicker.getDateTimeValue().getMinute(), 10, 9);
         CustomBinding.bindBidirectional(timeObjectProperty, sliderMinutes.valueProperty(),
                 LocalTime::getMinute,
-                minute -> timeObjectProperty.get().withMinute(minute.intValue()));
+                minute -> timeObjectProperty.get().withMinute(minute.intValue())
+        );
         final VBox vBox = new VBox(5, sliderHours, sliderMinutes);
         dateTimePicker.minutesSelectorProperty().addListener((observable, oldValue, newValue) -> {
             if (oldValue != newValue) {
