@@ -19,7 +19,7 @@ public class CustomBinding {
     }
 
     private static <X, Y> void addFlaggedChangeListener(ObservableValue<X> propertyX, WritableValue<Y> propertyY, Function<X, Y> updateY) {
-        propertyX.addListener(new ChangeListener<X>() {
+        propertyX.addListener(new ChangeListener<>() {
             private boolean alreadyCalled = false;
 
             @Override
