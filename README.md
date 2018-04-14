@@ -2,7 +2,11 @@
 
 # DateTimePicker for JavaFX9+
 
-A extended version of the JavaFX9 DatePicker which adds the possibility to also select a time.
+The DateTimePicker for JavaFX9+ is an extended version of the JavaFX9 DatePicker
+which adds the possibility to also select a time.\
+The component tries to mimic the original JavaFX9 design as close as possible.
+It also provides multiple ways of selecting time by using `Spinners` as well as `Sliders`
+with and without the possibility to select minutes separately,
 
 ## License
 
@@ -10,8 +14,13 @@ This project is licensed under the [Apache License 2.0](LICENSE).
 
 ## Screenshots
 
+## Contribution
+
+Feel free to contribute via github pull requests or by providing github issue reports if you face any.
+
 ## Usage
 
+As this project is still in `BETA` stage only snapshot releases are available via jitpack.
 
 ### Add the jitpack maven repository
 
@@ -62,7 +71,7 @@ public class DateTimePickerDemo extends Application {
         CheckBox checkBoxMinutes = new CheckBox("MinutesSelector");
         checkBoxMinutes.disableProperty().setValue(true);
         checkBoxMinutes.setPadding(new Insets(0, 0, 0, 25));
-        checkBoxMinutes.selectedProperty().bindBidirectional(dateTimePicker.minutesSelector());
+        checkBoxMinutes.selectedProperty().bindBidirectional(dateTimePicker.minutesSelectorProperty());
         radioButtonNone.selectedProperty().bindBidirectional(checkBoxMinutes.disableProperty());
 
         group.selectedToggleProperty().addListener((observable, oldValue, newValue) ->
