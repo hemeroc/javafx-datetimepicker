@@ -3,6 +3,7 @@ package io.github.hemeroc.javafx.datetimepicker;
 import io.github.hemeroc.javafx.datetimepicker.util.CustomBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -33,6 +34,7 @@ public class DateTimePickerSkin extends DatePickerSkin {
         );
 
         popupContent = super.getPopupContent();
+        popupContent.getStyleClass().add("date-time-picker-popup");
 
         timeSpinner = getTimeSpinner();
         timeSlider = getTimeSlider();
@@ -77,11 +79,9 @@ public class DateTimePickerSkin extends DatePickerSkin {
                 minute -> timeObjectProperty.get().withMinute(minute)
         );
         final Label labelTimeSeperator = new Label(":");
-        HBox hBox = new HBox(new Label("Time:"), spinnerHours, labelTimeSeperator, spinnerMinutes);
-        hBox.setSpacing(5);
+        HBox hBox = new HBox(5, new Label("Time:"), spinnerHours, labelTimeSeperator, spinnerMinutes);
         hBox.setPadding(new Insets(8));
         hBox.setAlignment(Pos.CENTER_LEFT);
-        hBox.getStyleClass().add("month-year-pane");
         dateTimePicker.minutesSelectorProperty().addListener((observable, oldValue, newValue) -> {
             if (oldValue != newValue) {
                 if (newValue) {
@@ -98,6 +98,10 @@ public class DateTimePickerSkin extends DatePickerSkin {
             timeObjectProperty.set((dateTimeValue != null) ? LocalTime.from(dateTimeValue) : LocalTime.MIDNIGHT);
             dateTimePicker.fireEvent(new ActionEvent());
         });
+        ObservableList<String> styleClass = hBox.getStyleClass();
+        styleClass.add("month-year-pane");
+        styleClass.add("time-selector-pane");
+        styleClass.add("time-selector-spinner-pane");
         return hBox;
     }
 
@@ -118,6 +122,7 @@ public class DateTimePickerSkin extends DatePickerSkin {
                 minute -> timeObjectProperty.get().withMinute(minute.intValue())
         );
         final VBox vBox = new VBox(5, sliderHours, sliderMinutes);
+        vBox.setPadding(new Insets(8));
         dateTimePicker.minutesSelectorProperty().addListener((observable, oldValue, newValue) -> {
             if (oldValue != newValue) {
                 if (newValue) {
@@ -127,7 +132,10 @@ public class DateTimePickerSkin extends DatePickerSkin {
                 }
             }
         });
-        vBox.setPadding(new Insets(8));
+        ObservableList<String> styleClass = vBox.getStyleClass();
+        styleClass.add("month-year-pane");
+        styleClass.add("time-selector-pane");
+        styleClass.add("time-selector-slider-pane");
         return vBox;
     }
 

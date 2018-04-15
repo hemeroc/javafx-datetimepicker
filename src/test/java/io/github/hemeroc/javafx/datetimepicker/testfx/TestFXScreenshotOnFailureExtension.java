@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import static java.nio.file.Files.createDirectories;
 import static org.testfx.util.DebugUtils.saveScreenshot;
 
-public class TestFXScreenshotExtension implements AfterTestExecutionCallback {
+public class TestFXScreenshotOnFailureExtension implements AfterTestExecutionCallback {
 
     private static final String SCREENSHOT_PATH = "testfx-result/";
     private static final String INDENT = "    ";
