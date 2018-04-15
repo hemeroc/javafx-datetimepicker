@@ -40,6 +40,7 @@ public class DateTimePicker extends DatePicker {
 
     public DateTimePicker(LocalDateTime localDateTime) {
         super(localDateTime.toLocalDate());
+        getStyleClass().add("date-time-picker");
         setConverter(new InternalConverter());
         valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
@@ -61,6 +62,7 @@ public class DateTimePicker extends DatePicker {
                                 KeyCode.ENTER, false, false, false, false));
             }
         });
+        dateTimeValue.setValue(localDateTime);
     }
 
     public DateTimePicker() {
