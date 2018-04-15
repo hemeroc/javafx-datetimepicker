@@ -5,6 +5,9 @@
 ### PDF-Files ###
 *.pdf
 
+### TestFX-Result-Files ###
+testfx-result/
+
 ### Log-Files ###
 log/
 

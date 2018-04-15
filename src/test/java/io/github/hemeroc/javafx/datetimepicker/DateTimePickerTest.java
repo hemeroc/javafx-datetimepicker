@@ -1,5 +1,7 @@
 package io.github.hemeroc.javafx.datetimepicker;
 
+import io.github.hemeroc.javafx.datetimepicker.testfx.TestFXHeadlessExtension;
+import io.github.hemeroc.javafx.datetimepicker.testfx.TestFXScreenshotExtension;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -18,18 +20,8 @@ import java.util.Locale;
 import static javafx.geometry.Pos.CENTER;
 import static org.testfx.api.FxAssert.verifyThat;
 
-@ExtendWith(ApplicationExtension.class)
+@ExtendWith({TestFXHeadlessExtension.class, ApplicationExtension.class, TestFXScreenshotExtension.class})
 class DateTimePickerTest {
-
-    static {
-        System.setProperty("testfx.robot", "glass");
-        System.setProperty("testfx.headless", "true");
-        System.setProperty("java.awt.robot", "true");
-        System.setProperty("java.awt.headless", "true");
-        System.setProperty("prism.order", "sw");
-        System.setProperty("prism.text", "t2k");
-        System.setProperty("headless.geometry", "1920x1080-64");
-    }
 
     private static final LocalDateTime INITIAL_DATETIME = LocalDateTime.of(2018, 4, 15, 13, 37);
     private static final String DE_FORMAT = DateTimeFormatterBuilder.getLocalizedDateTimePattern(

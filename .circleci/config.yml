@@ -22,4 +22,7 @@ jobs:
       - run:
           name: Integration Test
           command: ./mvnw integration-test
+      - store_artifacts:
+          path: ./testfx-result/
+
 
