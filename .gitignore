@@ -77,15 +77,6 @@ local.properties
 .springBeans
 .recommenders/
 
-### NetBeans ###
-nbproject/private/
-build/
-nbbuild/
-dist/
-nbdist/
-nbactions.xml
-.nb-gradle/
-
 #########################
 ### Operating Systems ###
 #########################
